@@ -3,7 +3,7 @@ package main
 import (
 	"atom/sdl"
 	"fmt"
-	"rand"
+	"math/rand"
 	"time"
 )
 
