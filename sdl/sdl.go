@@ -365,6 +365,14 @@ func WM_ToggleFullScreen(surface *Surface) int {
 	return status
 }
 
+// Set input grab mode
+func WM_GrabInput(mode int) int {
+	GlobalMutex.Lock()
+	status := int(C.SDL_WM_GrabInput(C.SDL_GrabMode(mode)))
+	GlobalMutex.Unlock()
+	return status
+}
+
 // Swaps OpenGL framebuffers/Update Display.
 func GL_SwapBuffers() {
 	GlobalMutex.Lock()
