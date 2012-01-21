@@ -2,7 +2,7 @@ package sdl
 
 import "time"
 
-var events chan interface{} = make(chan interface{})
+var events chan interface{} = make(chan interface{}, 20)
 
 // This channel delivers SDL events. Each object received from this channel
 // has one of the following types: sdl.QuitEvent, sdl.KeyboardEvent,
