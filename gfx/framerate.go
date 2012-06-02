@@ -49,7 +49,7 @@ func (manager *FPSmanager) FramerateDelay() {
 
 	if current_ticks <= target_ticks {
 		the_delay = target_ticks - current_ticks
-		time.Sleep(time.Duration(the_delay) * 1e6)
+		time.Sleep(time.Duration(the_delay * 1e6))
 	} else {
 		manager.framecount = 0
 		manager.lastticks = uint64(time.Now().UnixNano()) / 1e6

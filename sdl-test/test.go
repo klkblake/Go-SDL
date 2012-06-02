@@ -1,11 +1,14 @@
 package main
 
 import (
-	"atom/sdl"
-	"atom/sdl/ttf"
-	"atom/sdl/mixer"
-	"math"
 	"fmt"
+	"github.com/0xe2-0x9a-0x9b/Go-SDL/mixer"
+	"github.com/0xe2-0x9a-0x9b/Go-SDL/sdl"
+	"github.com/0xe2-0x9a-0x9b/Go-SDL/ttf"
+	"log"
+	"math"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -41,13 +44,34 @@ func worm(in <-chan Point, out chan<- Point, draw chan<- Point) {
 }
 
 func main() {
+	log.SetFlags(0)
+
+	var resourcePath string
+	{
+		GOPATH := os.Getenv("GOPATH")
+		if GOPATH == "" {
+			log.Fatal("No such environment variable: GOPATH")
+		}
+		for _, gopath := range strings.Split(GOPATH, ":") {
+			a := gopath + "/src/github.com/0xe2-0x9a-0x9b/Go-SDL/sdl-test"
+			_, err := os.Stat(a)
+			if err == nil {
+				resourcePath = a
+				break
+			}
+		}
+		if resourcePath == "" {
+			log.Fatal("Failed to find resource directory")
+		}
+	}
+
 	var joy *sdl.Joystick
 	if sdl.Init(sdl.INIT_EVERYTHING) != 0 {
-		panic(sdl.GetError())
+		log.Fatal(sdl.GetError())
 	}
 
 	if ttf.Init() != 0 {
-		panic(sdl.GetError())
+		log.Fatal(sdl.GetError())
 	}
 
 	if sdl.NumJoysticks() > 0 {
@@ -67,13 +91,13 @@ func main() {
 
 	if mixer.OpenAudio(mixer.DEFAULT_FREQUENCY, mixer.DEFAULT_FORMAT,
 		mixer.DEFAULT_CHANNELS, 4096) != 0 {
-		panic(sdl.GetError())
+		log.Fatal(sdl.GetError())
 	}
 
 	var screen = sdl.SetVideoMode(640, 480, 32, sdl.RESIZABLE)
 
 	if screen == nil {
-		panic(sdl.GetError())
+		log.Fatal(sdl.GetError())
 	}
 
 	var video_info = sdl.GetVideoInfo()
@@ -86,35 +110,35 @@ func main() {
 
 	sdl.WM_SetCaption("Go-SDL SDL Test", "")
 
-	image := sdl.Load("test.png")
+	image := sdl.Load(resourcePath + "/test.png")
 
 	if image == nil {
-		panic(sdl.GetError())
+		log.Fatal(sdl.GetError())
 	}
 
 	sdl.WM_SetIcon(image, nil)
 
 	running := true
 
-	font := ttf.OpenFont("Fontin Sans.otf", 72)
+	font := ttf.OpenFont(resourcePath+"/Fontin Sans.otf", 72)
 
 	if font == nil {
-		panic(sdl.GetError())
+		log.Fatal(sdl.GetError())
 	}
 
 	font.SetStyle(ttf.STYLE_UNDERLINE)
 	white := sdl.Color{255, 255, 255, 0}
 	text := ttf.RenderText_Blended(font, "Test (with music)", white)
-	music := mixer.LoadMUS("test.ogg")
+	music := mixer.LoadMUS(resourcePath + "/test.ogg")
 
 	if music == nil {
-		panic(sdl.GetError())
+		log.Fatal(sdl.GetError())
 	}
 
 	music.PlayMusic(-1)
 
 	if sdl.GetKeyName(270) != "[+]" {
-		panic("GetKeyName broken")
+		log.Fatal("GetKeyName broken")
 	}
 
 	worm_in := make(chan Point)
@@ -129,7 +153,7 @@ func main() {
 	out = make(chan Point)
 	go worm(in, out, draw)
 
-	ticker := time.NewTicker(1e9 / 50 /*50Hz*/ )
+	ticker := time.NewTicker(time.Second / 50) // 50 Hz
 
 	// Note: The following SDL code is highly ineffective.
 	//       It is eating too much CPU. If you intend to use Go-SDL,
@@ -203,7 +227,7 @@ func main() {
 				screen = sdl.SetVideoMode(int(e.W), int(e.H), 32, sdl.RESIZABLE)
 
 				if screen == nil {
-					panic(sdl.GetError())
+					log.Fatal(sdl.GetError())
 				}
 			}
 		}

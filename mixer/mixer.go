@@ -7,7 +7,8 @@ functions have been changed to be in a more object-oriented style
 */
 package mixer
 
-// #cgo pkg-config: SDL_mixer
+// #cgo pkg-config: sdl
+// #cgo LDFLAGS: -lSDL_mixer
 // #include <SDL/SDL_mixer.h>
 import "C"
 import "unsafe"
@@ -85,7 +86,6 @@ func HaltMusic() { C.Mix_HaltMusic() }
 // Fades out music over the milliseconds specified.  Music is halted after
 // the fade out is completed.
 func FadeOutMusic(ms int) int { return int(C.Mix_FadeOutMusic(C.int(ms))) }
-
 
 // Returns the type of the currently playing music.
 func GetMusicType() int { return int(C.Mix_GetMusicType(nil)) }
