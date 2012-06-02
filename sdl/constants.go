@@ -127,6 +127,11 @@ const (
 	DISABLE = C.SDL_DISABLE
 	ENABLE  = C.SDL_ENABLE
 
+	// grab state
+	GRAB_QUERY = C.SDL_QUERY
+	GRAB_OFF   = C.SDL_GRAB_OFF
+	GRAB_ON    = C.SDL_GRAB_ON
+
 	// keys
 	K_UNKNOWN      = C.SDLK_UNKNOWN
 	K_FIRST        = C.SDLK_FIRST
